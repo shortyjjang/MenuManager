@@ -11,6 +11,8 @@ interface ContextType {
   menuList: MenuType[];
   setMenuList: (menuList: MenuType[]) => void;
   isTouch: boolean;
+  mode:string
+  setMode:(mode:string) => void
 }
 
 const Context = createContext<ContextType | undefined>(undefined);
@@ -40,6 +42,7 @@ export const MenuProvider: React.FC<{ children: ReactNode, menus: MenuType[] }> 
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [fontSize, setFontSize] = useState(16);
   const [isTouch, setIsTouch] = useState(false);
+  const [mode, setMode] = useState('NORMAL')
   useEffect(() => {
     if (window.navigator.maxTouchPoints > 0) setIsTouch(true);
   }, []);
@@ -53,6 +56,8 @@ export const MenuProvider: React.FC<{ children: ReactNode, menus: MenuType[] }> 
         menuList,
         setMenuList,
         isTouch,
+        mode,
+        setMode
       }}
     >
       {children}

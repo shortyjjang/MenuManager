@@ -6,7 +6,7 @@ import { useMenuManager } from "@/hooks/useMenuManager";
 import { useMenu } from "@/context/menu";
 
 export default function Category() {
-  const { menuList, selectedCategory, setSelectedCategory, isTouch } = useMenu();
+  const { menuList, selectedCategory, setSelectedCategory, isTouch, fontSize, mode } = useMenu();
   const {
     moveMenuRef,
     setTargetIndex,
@@ -37,7 +37,7 @@ export default function Category() {
   const renderMenuStyle = (index: number) => {
     return {
       className: collapseTailwindClassName([
-        "relative select-none aspect-[3/1] inline-flex items-center justify-center transition-all duration-300 shadow-[-1px_0_0_#d1d5db]",
+        "relative select-none h-[60px] inline-flex items-center justify-center transition-all duration-300 shadow-[-1px_0_0_#d1d5db]",
         selectedCategory === index
           ? `text-white font-bold`
           : `border-r bg-gray-100 ${
@@ -75,7 +75,9 @@ export default function Category() {
   };
   return (
     <>
-      <div className="grid grid-cols-5 bg-gray-100">
+      <div className="grid grid-cols-5 bg-gray-100" style={{
+        fontSize: fontSize+'px'
+      }}>
         {(menuList || []).map((menu, index) => (
           <div
             key={menu.categoryId}
@@ -83,7 +85,7 @@ export default function Category() {
               if (moveMenuRef.current.startIndex === null)
                 setSelectedCategory(index);
             }}
-            {...(isTouch ? touchProps(index) : dragProps(index))}
+            {...(mode === "EDITOR" ? {...(isTouch ? touchProps(index) : dragProps(index))} : {})}
             {...renderMenuStyle(index)}
           >
             {menu.categoryName}

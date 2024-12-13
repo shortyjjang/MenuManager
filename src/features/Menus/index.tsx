@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useMenuManager } from "@/hooks/useMenuManager";
 import { useMenu } from "@/context/menu";
 import { ProductType } from "@/util/getMenus";
 import { collapseTailwindClassName } from "@/util/collapseTailwindClassName";
 
 export default function Menus() {
-  const { menuList, selectedCategory, setMenuList, isTouch } = useMenu();
+  const { menuList, selectedCategory, setMenuList, isTouch, fontSize, mode } = useMenu();
   const currentMenu = menuList[selectedCategory] || { productList: [] };
   const { moveMenuRef, setTargetIndex, moveMenuEnd } = useMenuManager(
     currentMenu.productList as unknown as Record<
@@ -15,13 +15,28 @@ export default function Menus() {
       (string | number)[] | string | number
     >[]
   );
+  const scrollRef = useRef<HTMLDivElement | null>(null)
 
   const dropProps = (index: number) => ({
     draggable: true,
     onDragStart: () => (moveMenuRef.current.startIndex = index),
-    onDragOver: () => {
+    onDragOver: (event: React.DragEvent) => {
       moveMenuRef.current.targetIndex = index;
       setTargetIndex(index);
+
+      // 스크롤 이동 로직 추가
+      const scrollElement = scrollRef.current;
+      if (scrollElement) {
+        const { clientY } = event;
+        const { top, bottom } = scrollElement.getBoundingClientRect();
+        const scrollThreshold = 20; // 스크롤을 시작할 임계값
+
+        if (clientY < top + scrollThreshold) {
+          scrollElement.scrollTop -= 10; // 위로 스크롤
+        } else if (clientY > bottom - scrollThreshold) {
+          scrollElement.scrollTop += 10; // 아래로 스크롤
+        }
+      }
     },
     onDragEnd: () => {
       const newProductMenuList = moveMenuEnd();
@@ -72,7 +87,9 @@ export default function Menus() {
   };
 
   return (
-    <>
+    <div className="h-[calc(100vh-110px)] overflow-auto" ref={scrollRef} style={{
+      fontSize: fontSize+'px'
+    }}>
       <div
         className={`grid grid-cols-5 relative gap-2 p-4 border-t border-gray-300`}
         style={{
@@ -89,15 +106,17 @@ export default function Menus() {
           <div
             key={menu.productId}
             className={renderClassName(index)}
-            {...(isTouch ? touchProps(index) : dropProps(index))}
+            {...(mode === "EDITOR" ? {...(isTouch ? touchProps(index) : dropProps(index))} : {})}
           >
             {menu.productName}
-            <span className="text-sm text-gray-500">
+            <span className="text-gray-500" style={{
+              fontSize: fontSize - 4 + 'px'
+            }}>
               {(menu.salePrice || 0).toLocaleString()}원
             </span>
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
