@@ -49,6 +49,3 @@ npm install
 - **Tailwind CSS**: 유틸리티 기반의 CSS 프레임워크
 - **TypeScript**: 정적 타입을 지원하는 JavaScript의 상위 집합
 
-## 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
