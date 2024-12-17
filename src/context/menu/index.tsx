@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { MenuType } from "@/util/getMenus";
+import { MenuType } from "@/util/getMenus"
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import cookieStore from "js-cookie"
+
 interface ContextType {
   selectedCategory: number;
   setSelectedCategory: (selectedCategory: number) => void;
@@ -34,17 +36,21 @@ export const useMenu = () => {
  * @param children
  * @constructor
  */
-export const MenuProvider: React.FC<{ children: ReactNode, menus: MenuType[] }> = ({
+export const MenuProvider: React.FC<{ children: ReactNode, menus: MenuType[], fontSize: number }> = ({
   children,
   menus,
+  fontSize : size
 }) => {
   const [menuList, setMenuList] = useState(menus);
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const [fontSize, setFontSize] = useState(16);
+  const [fontSize, setFontSize] = useState(size);
   const [isTouch, setIsTouch] = useState(false);
   const [mode, setMode] = useState('NORMAL')
   useEffect(() => {
     if (window.navigator.maxTouchPoints > 0) setIsTouch(true);
+        if (!cookieStore.get("fontSize")) {
+          cookieStore.set("fontSize", String(fontSize));
+        }
   }, []);
   return (
     <Context.Provider

@@ -3,9 +3,10 @@ import { useMenu } from "@/context/menu";
 import Dropdown from "@/entities/Dropdown";
 import IconDrag from "@/entities/icons/IconDrag";
 import React, { useState } from "react";
+import cookieStore from "js-cookie"
 
 export default function Header() {
-  const { mode, setMode, fontSize, setFontSize } = useMenu();
+  const { mode, setMode, fontSize, setFontSize, menuList, setMenuList } = useMenu();
   const [isOpenFont, setIsOpenFont] = useState(false);
   return (
     <div className="bg-black h-[50px] text-white flex justify-end items-center px-[12px] gap-2">
@@ -49,6 +50,8 @@ export default function Header() {
           <button
             className="border border-white border-opacity-60 h-[32px] w-[70px] text-[12px]"
             onClick={() => {
+              cookieStore.set("menus", JSON.stringify(menuList));
+              cookieStore.set("fontSize", JSON.stringify(fontSize));
               setMode("NORMAL");
             }}
           >
@@ -56,7 +59,9 @@ export default function Header() {
           </button>
           <button
             className="border border-white border-opacity-40 text-gray-400 h-[32px] w-[70px] text-[12px]"
-            onClick={() => {
+            onClick={() => { 
+            setFontSize(cookieStore.get("fontSize") ? Number(cookieStore.get("fontSize") as string) : 16)
+            setMenuList(cookieStore.get("menus") ? JSON.parse(cookieStore.get("menus") as string) : [])
               setMode("NORMAL");
             }}
           >
